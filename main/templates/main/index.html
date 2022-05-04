@@ -1,10 +1,78 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v6.1.1/js/all.js"></script>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+
 <body>
-    장고 첫페이지!
+    {% include "../include/toolbar.html" %}
+    <section class="hero is-primary is-medium">
+        <!-- Hero content: will be in the middle -->
+        <div class="hero-body" style="margin-top:50px;">
+            <div class="container has-text-centered">
+                <p class="title">
+                    Title
+                </p>
+                <p class="subtitle">
+                    Subtitle
+                </p>
+            </div>
+        </div>
+
+        <!-- Hero footer: will stick at the bottom -->
+        <div class="hero-foot">
+            <nav class="tabs">
+                <div class="container">
+                    <center>
+                        <figure class="image is-128x128" style="margin-bottom:10px;">
+                            <img class="is-rounded " src="https://bulma.io/images/placeholders/128x128.png">
+                        </figure>
+                    </center>
+                </div>
+            </nav>
+        </div>
+    </section>
+    <center><h1 class="title" style="margin-top:50px;">이재성</h1></center>
+    <nav class="level is-mobile" style="margin-top:50px;">
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Tweets</p>
+                <p class="title">3,456</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Following</p>
+                <p class="title">123</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Followers</p>
+                <p class="title">456K</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Likes</p>
+                <p class="title">789</p>
+            </div>
+        </div>
+    </nav>
+<footer class="footer">
+  <div class="content has-text-centered">
+    <p>
+      <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is licensed
+      <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+      is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+    </p>
+  </div>
+</footer>
 </body>
+
 </html>
