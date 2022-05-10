@@ -11,64 +11,6 @@
 
 <body>
     {% include "../include/toolbar.html" %}
-    <section class="hero is-primary is-medium">
-        <!-- Hero content: will be in the middle -->
-        <div class="hero-body" style="margin-top:50px;">
-            <div class="container has-text-centered">
-                <p class="title">
-                    Title
-                </p>
-                <p class="subtitle">
-                    Subtitle
-                </p>
-            </div>
-        </div>
-
-        <!-- Hero footer: will stick at the bottom -->
-        <div class="hero-foot">
-            <nav class="tabs">
-                <div class="container">
-                    <center>
-                        <figure class="image is-128x128" style="margin-bottom:10px;">
-                            <img class="is-rounded " src="https://bulma.io/images/placeholders/128x128.png">
-                        </figure>
-                    </center>
-                        <ul>
-                          <li><a>글쓰기</a></li>
-                        </ul>
-                </div>
-            </nav>
-        </div>
-    </section>
-    <center><h1 class="title" style="margin-top:50px;">{{ user_name }}</h1></center>
-    <nav class="level is-mobile" style="margin-top:50px;">
-        <div class="level-item has-text-centered">
-            <div>
-                <p class="heading">포스트</p>
-                <p class="title">{{count}}</p>
-            </div>
-        </div>
-        <div class="level-item has-text-centered">
-            <div>
-                <p class="heading">팔로잉</p>
-                <p class="title">123</p>
-            </div>
-        </div>
-        <div class="level-item has-text-centered">
-            <div>
-                <p class="heading">팔로워</p>
-                <p class="title">456K</p>
-            </div>
-        </div>
-        <div class="level-item has-text-centered">
-            <div>
-                <p class="heading">좋아요</p>
-                <p class="title">789</p>
-            </div>
-        </div>
-    </nav>
-
-
     <section class="section is-medium">
         {% for p in data %}
             <article class="media">
@@ -148,9 +90,9 @@
         </div>
         </article>
         {% endfor %}
-
     </section>
-{% include "../include/footer.html" %}
+    {% include "../include/footer.html" %}
+
 </body>
 
 </html>
