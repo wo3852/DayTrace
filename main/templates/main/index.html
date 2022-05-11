@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v6.1.1/js/all.js"></script>
     {% include "../include/base.html" %}
-    <script defer src="/static/js/newsfeed.js"></script>
+    <script defer src="/static/js/index.js"></script>
 </head>
 
 <body>
@@ -33,19 +31,20 @@
                             <img class="is-rounded " src="https://bulma.io/images/placeholders/128x128.png">
                         </figure>
                     </center>
-                        <ul>
-                          <li><a>글쓰기</a></li>
-                        </ul>
                 </div>
             </nav>
         </div>
     </section>
-    <center><h1 class="title" style="margin-top:50px;">{{ user_name }}</h1></center>
+
+
+    <center>
+        <h1 class="title user_name_title" style="margin-top:50px;"></h1>
+    </center>
     <nav class="level is-mobile" style="margin-top:50px;">
         <div class="level-item has-text-centered">
             <div>
                 <p class="heading">포스트</p>
-                <p class="title">{{count}}</p>
+                <p class="title post_count"></p>
             </div>
         </div>
         <div class="level-item has-text-centered">
@@ -69,88 +68,32 @@
     </nav>
 
 
-    <section class="section is-medium">
-        {% for p in data %}
-            <article class="media">
+<!--게시물 달기창 시작-->
+    <section class="section posting_div">
+        <article class="media">
             <figure class="media-left">
                 <p class="image is-64x64">
                     <img src="https://bulma.io/images/placeholders/128x128.png">
                 </p>
             </figure>
             <div class="media-content">
-                <div class="content">
-                    <p>
-                        <strong>{{p.last_name}}</strong>
-                        <br>
-                            {{p.content}}
-                        <br>
-                        <small><a>좋아요 (0)</a> · <a class ="reply_button">댓글</a> · {{p.created_date}}</small>
+                <div class="field">
+                    <p class="control">
+                        <textarea class="textarea" placeholder="Add a comment..." value=""></textarea>
                     </p>
                 </div>
-                <div class="comment_div" style="display:none;">
-                <article class="media">
-                    <figure class="media-left">
-                        <p class="image is-64x64">
-                            <img src="https://bulma.io/images/placeholders/128x128.png">
-                        </p>
-                    </figure>
-                    <div class="media-content">
-                        <div class="field">
-                            <p class="control">
-                                <textarea class="textarea" placeholder="Add a comment..."></textarea>
-                            </p>
-                        </div>
-                        <div class="field">
-                            <p class="control">
-                                <button class="button">댓글달기</button>
-                            </p>
-                        </div>
-                    </div>
-                </article>
-                <article class="media">
-                    <figure class="media-left">
-                        <p class="image is-48x48">
-                            <img src="https://bulma.io/images/placeholders/96x96.png">
-                        </p>
-                    </figure>
-                    <div class="media-content">
-                        <div class="content">
-                            <p>
-                                <strong>Sean Brown</strong>
-                                <br>
-                                Donec sollicitudin urna eget eros malesuada sagittis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam blandit nisl a nulla sagittis, a lobortis leo feugiat.
-                                <br>
-                                <small><a>좋아요 (0)</a> 2 hrs</small>
-                            </p>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="media">
-                    <figure class="media-left">
-                        <p class="image is-48x48">
-                            <img src="https://bulma.io/images/placeholders/96x96.png">
-                        </p>
-                    </figure>
-                    <div class="media-content">
-                        <div class="content">
-                            <p>
-                                <strong>Kayli Eunice </strong>
-                                <br>
-                                Sed convallis scelerisque mauris, non pulvinar nunc mattis vel. Maecenas varius felis sit amet magna vestibulum euismod malesuada cursus libero. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus lacinia non nisl id feugiat.
-                                <br>
-                                <small><a>좋아요 (0)</a> 2 hrs</small>
-                            </p>
-                        </div>
-                    </div>
-                </article>
+                <div class="field">
+                    <p class="control">
+                        <button class="button is-success post_send">게시글 저장</button>
+                    </p>
+                </div>
             </div>
-        </div>
         </article>
-        {% endfor %}
-
     </section>
-{% include "../include/footer.html" %}
+<!--게시물 달기창 끝-->
+
+
+    {% include "../include/footer.html" %}
 </body>
 
 </html>

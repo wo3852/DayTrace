@@ -1,8 +1,5 @@
-from django import views
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.contrib import auth
-from django.forms.models import model_to_dict
 
 from post.models import Post
 
@@ -10,21 +7,21 @@ def index(request):
     if not request.session.session_key:
         return redirect("login")
 
-    user = User.objects.get(username=request.user.get_username())
-    s = "SELECT p.post_uuid,p.content,p.content,created_date,u.last_name " \
-        "FROM daytrace.post_post as p " \
-        "inner join daytrace.auth_user as u" \
-        " on p.author_id = u.id " \
-        "where u.id = "+str(+user.id)
+    # user = User.objects.get(username=request.user.get_username())
+    # s = "SELECT p.post_uuid,p.content,p.content,created_date,u.last_name " \
+    #     "FROM daytrace.post_post as p " \
+    #     "inner join daytrace.auth_user as u" \
+    #     " on p.author_id = u.id " \
+    #     "where u.id = "+str(+user.id)
+    #
+    # data = Post.objects.raw(s)
+    #
+    # res = {"user_name":request.user.get_full_name(),
+    #        "index":"home",
+    #        "data": data,
+    #        "count":len(data)}
 
-    data = Post.objects.raw(s)
-
-    res = {"user_name":request.user.get_full_name(),
-           "index":"home",
-           "data": data,
-           "count":len(data)}
-
-    return render(request,'main/index.html',res)
+    return render(request,'main/index.html')
 
 
 def messenger(request):
