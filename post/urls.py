@@ -10,4 +10,6 @@ urlpatterns = [
     path('ajax_reply_delete/', ajax_reply_delete, name='ajax_reply_delete'),
     path('ajax_post_update/', ajax_post_update, name='ajax_post_update'),
     path('ajax_reply_update/', ajax_reply_update, name='ajax_reply_update'),
+    path('ajax_post_send_like/', ajax_post_send_like, name='ajax_post_send_like'),
+    path('ajax_reply_send_like/', ajax_reply_send_like, name='ajax_reply_send_like'),
 ]

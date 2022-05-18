@@ -21,7 +21,9 @@ function getData() {
             $(".send_username").text("@"+post["user_username"])
             $(".send_id").text(post["user_last_name"])
             $(".post_send_user_img")[0].src = get_img(post["user_img"])
-            $(".title-user-img")[0].src = get_img(post["user_img"])
+            if ($(".title-user-img")[0]){
+                $(".title-user-img")[0].src = get_img(post["user_img"])
+            }
         },
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText);
@@ -124,22 +126,23 @@ function setData(list) {
 
 
 $(document).on("click",".reply_button",function(e){
-
     var div = e.currentTarget.parentElement.parentElement.parentElement.parentElement.children[2]
 
     if (div.style.display == ""){
+        e.currentTarget.style.color = ''
         div.style.display="none"
         switch_count -= 1
     }
     else{
         if(switch_count >= 1){
             $(".comment_div").css("display","none")
+            $(".reply_button").css("color","")
             switch_count = 0
         }
         var post_item = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement
         var post_index = get_index(post_item)
         var post_dic = get_target(post_item)
-
+        e.currentTarget.style.color = 'pink'
         div.style.display= ""
         switch_count += 1
         var reply_list = post["post_list"][get_index(post_item)]["reply_list"]
@@ -156,7 +159,6 @@ $(document).on("click",".reply_button",function(e){
                   for (i in post["post_list"][get_index(post_item)]["reply_list"]){
                     reply_draw(post_item,i)
                   }
-
             },
             error : function(xhr,errmsg,err) {
                 console.log(xhr.status + ": " + xhr.responseText);
@@ -165,6 +167,42 @@ $(document).on("click",".reply_button",function(e){
     }
 });
 
+$(document).on("click",".post_like",function(e){
+    var post_item = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement
+    var icon = e.currentTarget
+    $.ajax({
+        type:'POST',
+        url:'../post/ajax_post_send_like/',
+        data:JSON.stringify({"post_uuid":get_target(post_item).uuid}),
+        success:function(json){
+            check = json["like_check"]
+            if(check){icon.style.color = "pink"}
+            else{icon.style.color = ""}
+
+        },
+        error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+   });
+});
+
+$(document).on("click",".reply_like",function(e){
+    var reply_item = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement
+    var icon = e.currentTarget
+    $.ajax({
+        type:'POST',
+        url:'../post/ajax_reply_send_like/',
+        data:JSON.stringify({"reply_uuid":get_reply_target(reply_item).reply_uuid}),
+        success:function(json){
+            check = json["like_check"]
+            if(check){icon.style.color = "pink"}
+            else{icon.style.color = ""}
+        },
+        error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+   });
+});
 
 $(document).on("click",".reply_send",function(e){
     var text = e.currentTarget.parentElement.parentElement.parentElement.parentElement.children[0].children[0].children[2]
@@ -218,7 +256,7 @@ function post_draw(dic,index) {
         '</div>\n'+
         '<nav class="level is-mobile">\n'+
         '<div class="level-left">\n'+
-        icon_show("post",dic["my_item_check"])+'\n'+
+        icon_show("post",dic["my_item_check"],dic["like_check"])+'\n'+
         '</div>\n'+
         '</nav>\n'+
         '<div class="comment_div" style="display:none;">\n'+
@@ -226,7 +264,7 @@ function post_draw(dic,index) {
         '<article class="media">\n'+
         '<div class="media-left">\n'+
         '<figure class="image is-64x64">\n'+
-        '<img src="'+get_img(dic["user_img"])+'" alt="Image">\n'+
+        '<img src="'+get_img(post["user_img"])+'" alt="Image">\n'+
         '</figure>\n'+
         '</div>\n'+
         '<div class="media-content">\n'+
@@ -275,7 +313,6 @@ function reply_draw(post_item,idx) {
     reply_item = post_item.children[1].children[2].children[0]
     index = get_index(post_item)
     dic = post["post_list"][index]["reply_list"][idx]
-//    var s = (dic["my_item_check"]) ? ' · <a class="reply_update">수정</a> · <a class="reply_delete">삭제</a> · ' : ' '
 
     html =
         '<article class="media index-'+String(idx)+'">\n'+
@@ -295,7 +332,7 @@ function reply_draw(post_item,idx) {
         '</div>\n'+
         '<nav class="level is-mobile">\n'+
         '<div class="level-left">\n'+
-        icon_show("reply",dic["my_item_check"])+'\n'+
+        icon_show("reply",dic["my_item_check"],dic["like_check"])+'\n'+
         '</div>\n'+
         '</nav>\n'+
         '</div>\n'+
@@ -320,16 +357,23 @@ function naxt_line(text){
     return html
 }
 
-function icon_show(type,my_item_check){
-    html =
-        '<a class="level-item" aria-label="like">\n'+
-        '<span class="icon is-small">\n'+
-        '<i class="fas fa-heart" aria-hidden="true"></i>\n'+
-        '</span>\n'+
-        '</a>\n'
+function icon_show(type,my_item_check,like_check){
+    var html = ""
+    var s = ""
+    if (like_check){
+        s = '<span class="icon is-small '+type+'_like" style="color:pink;">'
+    }
+    else{
+        s = '<span class="icon is-small '+type+'_like">'
+    }
 
     if (type == "post"){
         html +=
+        '<a class="level-item" aria-label="like">\n'+
+        s+'\n'+
+        '<i class="fas fa-heart" aria-hidden="true"></i>\n'+
+        '</span>\n'+
+        '</a>\n'+
         '<a class="level-item" aria-label="reply">\n'+
         '<span class="icon is-small reply_button">\n'+
         '<i class="fas fa-reply" aria-hidden="true"></i>\n'+
@@ -352,6 +396,13 @@ function icon_show(type,my_item_check){
         }
 
         else if(type == "reply"){
+            html +=
+            '<a class="level-item" aria-label="like">\n'+
+            s+'\n'+
+            '<i class="fas fa-heart" aria-hidden="true"></i>\n'+
+            '</span>\n'+
+            '</a>\n'
+
             if (my_item_check){
                 html +=
                     '<a class="level-item" aria-label="like">\n'+

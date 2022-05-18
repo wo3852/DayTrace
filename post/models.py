@@ -14,6 +14,11 @@ class Like(models.Model):
     post_uuid = models.ForeignKey('Post', on_delete=models.CASCADE)
     author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 
+class Reply_like(models.Model):
+    reply_like_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    reply_uuid = models.ForeignKey('reply', on_delete=models.CASCADE)
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
 class reply(models.Model):
     reply_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_uuid = models.ForeignKey('Post', on_delete=models.CASCADE)

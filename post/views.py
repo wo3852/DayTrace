@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from post.models import Post
+from post.models import Post, Like, Reply_like
 from post.models import reply
 
 @csrf_exempt
@@ -18,6 +18,7 @@ def ajax_get_reply(request):
         data = {}
         for i in reply_temp:
             reply_user = User.objects.get(username=i.author)
+            like = Reply_like.objects.filter(reply_uuid=i.reply_uuid, author=user)
             reply_list.append({"reply_uuid":i.reply_uuid,
                                "reply_text":i.reply_text,
                                "created_date":i.created_date,
@@ -25,6 +26,7 @@ def ajax_get_reply(request):
                                "user_last_name":reply_user.last_name,
                                "user_img": reply_user.first_name,
                                "user_username": reply_user.username,
+                               "like_check": len(like) > 0,
                                "my_item_check": reply_user.id == user.id})
         data["reply_list"] = reply_list
         return JsonResponse(data)
@@ -87,6 +89,8 @@ def ajax_get_post(request):
 
         post_list = []
         for i in Post.objects.raw(s):
+            postTemp = Post.objects.get(post_uuid =i.post_uuid)
+            like = Like.objects.filter(post_uuid=postTemp, author=user)
             post_list.append({"uuid": i.post_uuid,
                               "content": i.content,
                               "created_date": i.created_date,
@@ -94,6 +98,7 @@ def ajax_get_post(request):
                               "user_last_name": i.last_name,
                               "user_img": i.first_name,
                               "user_username":i.username,
+                              "like_check": len(like) > 0,
                               "my_item_check": str(i.id) == str(user.id)})
         data["post_list"] = post_list
     return JsonResponse(data)
@@ -105,6 +110,40 @@ def ajax_post_delete(request):
         data = json.loads(request.body)
         Post.objects.get(post_uuid=data["post_uuid"],author=user.id).delete()
         return JsonResponse({})
+
+@csrf_exempt
+def ajax_post_send_like(request):
+    if request.method == 'POST':
+        user = User.objects.get(username=request.user.get_username())
+        data = json.loads(request.body)
+        post = Post.objects.get(post_uuid=data["post_uuid"])
+        like = Like.objects.filter(post_uuid=post, author=user)
+        check = None
+
+        if len(like):
+            Like.objects.get(post_uuid=post,author=user).delete()
+            check = False
+        else:
+            Like.objects.create(post_uuid=post, author=user)
+            check = True
+        return JsonResponse({"like_check":check})
+
+@csrf_exempt
+def ajax_reply_send_like(request):
+    if request.method == 'POST':
+        user = User.objects.get(username=request.user.get_username())
+        data = json.loads(request.body)
+        replyTemp = reply.objects.get(reply_uuid=data["reply_uuid"])
+        like = Reply_like.objects.filter(reply_uuid=replyTemp, author=user)
+        check = None
+
+        if len(like):
+            Reply_like.objects.get(reply_uuid=replyTemp,author=user).delete()
+            check = False
+        else:
+            Reply_like.objects.create(reply_uuid=replyTemp, author=user)
+            check = True
+        return JsonResponse({"like_check":check})
 
 @csrf_exempt
 def ajax_reply_delete(request):
