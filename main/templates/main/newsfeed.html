@@ -6,32 +6,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v6.1.1/js/all.js"></script>
     {% include "../include/base.html" %}
-    <script defer src="/static/js/newsfeed.js"></script>
+    <script defer src="/static/js/post.js"></script>
 </head>
 
 <body>
     {% include "../include/toolbar.html" %}
-    <section class="section is-medium posting_div">
-        <article class="media">
-            <figure class="media-left">
-                <p class="image is-64x64">
-                    <img src="https://bulma.io/images/placeholders/128x128.png">
-                </p>
-            </figure>
-            <div class="media-content">
-                <div class="field">
-                    <p class="control">
-                        <textarea class="textarea post-text" placeholder="Add a comment..." value=""></textarea>
-                    </p>
-                </div>
-                <div class="field">
-                    <p class="control">
-                        <button class="button is-success post_send">게시글 저장</button>
-                    </p>
-                </div>
-            </div>
-        </article>
-    </section>
+    {% include "../include/post.html" %}
     {% include "../include/footer.html" %}
 
 </body>

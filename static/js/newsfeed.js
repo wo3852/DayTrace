@@ -1,7 +1,8 @@
 var post;
 var switch_count = 0
+getData()
 
-$(function(){
+function getData() {
     $.ajax({
         type:'POST',
         url:'../post/ajax_get_post_newsfeed/',
@@ -17,7 +18,8 @@ $(function(){
             console.log(xhr.status + ": " + xhr.responseText);
         }
    });
-});
+}
+
 
 $('.post_send').click(function(){
     var text = $('.post-text')[0]
@@ -30,14 +32,13 @@ $('.post_send').click(function(){
         url:'../post/ajax_send_post/',
         data:JSON.stringify({"text" :text.value}),
         success:function(json){
-            console.log(json)
             text.value = ""
+            post_replash()
         },
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText);
         }
    });
-    post_draw(post["user_last_name"],text.value,"날짜")
 });
 
 
@@ -48,8 +49,6 @@ function setData(list) {
         post_draw(post_dict["user_last_name"],post_dict["content"],post_dict["created_date"])
     }
 }
-
-
 
 
 $(document).on("click",".reply_button",function(e){
@@ -173,4 +172,16 @@ function post_draw(user_last_name, content, created_date) {
         '</article>\n'+
         '</div>\n'
     $(".posting_div")[0].insertAdjacentHTML('afterend',html);
+}
+
+function post_replash() {
+    post_clear()
+    getData()
+}
+
+function post_clear() {
+    var item = $(".post-item")
+    for(i in item){
+        item[i].outerHTML = ""
+    }
 }
