@@ -271,7 +271,16 @@ $(document).on("click",".post_user_img",function(e){
     location.replace("../home/"+item.slice(1));
 });
 
-$(document).on("click",".username_click",function(e){
+$(document).on("click",".post_username_click",function(e){
+    location.replace("../home/"+e.currentTarget.innerHTML.slice(1));
+});
+
+$(document).on("click",".reply_user_img",function(e){
+    var item = e.currentTarget.parentElement.parentElement.parentElement.children[1].children[0].children[0].children[1].innerHTML
+    location.replace("../home/"+item.slice(1));
+});
+
+$(document).on("click",".reply_username_click",function(e){
     location.replace("../home/"+e.currentTarget.innerHTML.slice(1));
 });
 
@@ -286,7 +295,7 @@ function post_draw(dic,index) {
         '<div class="media-content">\n'+
         '<div class="content">\n'+
         '<p>\n'+
-        '<strong>'+dic["user_last_name"]+'</strong> <small style ="cursor:pointer; color:rgba(0,208,178);" class = "username_click">@'+dic["user_username"]+'</small> <small>'+dic["created_date"]+'</small>\n'+
+        '<strong>'+dic["user_last_name"]+'</strong> <small style ="cursor:pointer; color:rgba(0,208,178);" class = "post_username_click">@'+dic["user_username"]+'</small> <small>'+dic["created_date"]+'</small>\n'+
         '<pre>\n'+
         naxt_line(dic["content"])+'\n'+
         '</pre>\n'+
@@ -356,13 +365,13 @@ function reply_draw(post_item,idx) {
         '<article class="media index-'+String(idx)+'">\n'+
         '<div class="media-left">\n'+
         '<figure class="image is-64x64">\n'+
-        '<img src="'+get_img(dic.user_img)+'" alt="Image">\n'+
+        '<img src="'+get_img(dic.user_img)+'" alt="Image" style ="cursor:pointer;" class = "reply_user_img">\n'+
         '</figure>\n'+
         '</div>\n'+
         '<div class="media-content">\n'+
         '<div class="content">\n'+
         '<p>\n'+
-        '<strong>'+dic.user_last_name+'</strong> <small>@'+dic.user_username+'</small> <small>'+dic.created_date+'</small>\n'+
+        '<strong>'+dic.user_last_name+'</strong> <small style ="cursor:pointer; color:rgba(0,208,178);" class = "reply_username_click">@'+dic.user_username+'</small> <small>'+dic.created_date+'</small>\n'+
         '<pre>\n'+
         naxt_line(dic.reply_text)+'\n'+
         '</pre>\n'+
