@@ -19,6 +19,7 @@ def ajax_get_reply(request):
         for i in reply_temp:
             reply_user = User.objects.get(username=i.author)
             like = Reply_like.objects.filter(reply_uuid=i.reply_uuid, author=user)
+            like_count = Reply_like.objects.filter(reply_uuid=i.reply_uuid).count()
             reply_list.append({"reply_uuid":i.reply_uuid,
                                "reply_text":i.reply_text,
                                "created_date":i.created_date,
@@ -27,6 +28,7 @@ def ajax_get_reply(request):
                                "user_img": reply_user.first_name,
                                "user_username": reply_user.username,
                                "like_check": len(like) > 0,
+                               "like_count":like_count,
                                "my_item_check": reply_user.id == user.id})
         data["reply_list"] = reply_list
         return JsonResponse(data)
@@ -66,31 +68,38 @@ def ajax_get_post(request):
     # POST 요청일 때
     if request.method == 'POST':
         user = User.objects.get(username=request.user.get_username())
-        data = json.loads(request.body)
-        url = data["request_url"].split("/")[-2]
+        temp = json.loads(request.body)
         data = {}
-        data["user_id"] = user.id
-        data["user_last_name"] = user.last_name
-        data["user_username"] = user.username
-        data["user_img"] = user.first_name
+        url = temp["request_url"].split("/")[-2]
         if url == "newsfeed":
+            data["user_id"] = user.id
+            data["user_last_name"] = user.last_name
+            data["user_username"] = user.username
+            data["user_img"] = user.first_name
             s = "SELECT p.post_uuid,p.content,created_date,u.last_name,u.id,u.username,u.first_name " \
                 "FROM daytrace.post_post as p " \
                 "inner join daytrace.auth_user as u" \
                 " on p.author_id = u.id " \
                 "order by created_date asc"
         else:
+            id = temp["param_id"]
+            param_id = User.objects.get(username=id)
+            data["user_id"] = param_id.id
+            data["user_last_name"] = param_id.last_name
+            data["user_username"] = param_id.username
+            data["user_img"] = param_id.first_name
             s = "SELECT p.post_uuid,p.content,created_date,u.last_name,u.id,u.username,u.first_name " \
                 + "FROM daytrace.post_post as p " \
                 + "inner join daytrace.auth_user as u \n" \
                 + "on p.author_id = u.id \n" \
-                + "where u.id = " + str(user.id) \
+                + "where u.id = " + str(param_id.id) \
                 + "\norder by created_date asc"
 
         post_list = []
         for i in Post.objects.raw(s):
             postTemp = Post.objects.get(post_uuid =i.post_uuid)
             like = Like.objects.filter(post_uuid=postTemp, author=user)
+            like_count = Like.objects.filter(post_uuid=postTemp).count()
             post_list.append({"uuid": i.post_uuid,
                               "content": i.content,
                               "created_date": i.created_date,
@@ -99,6 +108,7 @@ def ajax_get_post(request):
                               "user_img": i.first_name,
                               "user_username":i.username,
                               "like_check": len(like) > 0,
+                              "like_count": like_count,
                               "my_item_check": str(i.id) == str(user.id)})
         data["post_list"] = post_list
     return JsonResponse(data)
@@ -170,3 +180,19 @@ def ajax_reply_update(request):
         data = json.loads(request.body)
         reply.objects.filter(author=user,reply_uuid=data["reply_uuid"]).update(reply_text=data["reply_content"])
         return JsonResponse({})
+
+@csrf_exempt
+def ajax_home_start(request):
+    if request.method == 'POST':
+        temp = {}
+        count = 0
+        data = json.loads(request.body)
+        user = User.objects.get(username=data["param_id"])
+        post = Post.objects.filter(author=user)
+        Reply = reply.objects.filter(author=user)
+        for i in post:
+            count += Like.objects.filter(post_uuid=i).count()
+        for i in Reply:
+            count += Reply_like.objects.filter(reply_uuid=i).count()
+
+        return JsonResponse({"post_reply_count":count})

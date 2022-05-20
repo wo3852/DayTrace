@@ -29,9 +29,10 @@
             <nav class="tabs">
                 <div class="container">
                     <ul>
-                        <li><a class ="img-update">프로필 사진</a></li>
-                        <li style="display: none;"><a><input type="file" class="img-upload" accept="image/*" required multiple></a></li>
-
+                        {% if my_check %}
+                            <li><a class ="img-update">프로필 사진</a></li>
+                            <li style="display: none;"><a><input type="file" class="img-upload" accept="image/*" required multiple></a></li>
+                        {% endif %}
                     </ul>
                   </div>
             </nav>
@@ -63,8 +64,8 @@
         </div>
         <div class="level-item has-text-centered">
             <div>
-                <p class="heading">좋아요</p>
-                <p class="title">789</p>
+                <p class="heading">하트</p>
+                <p class="title post_reply_count"></p>
             </div>
         </div>
     </nav>

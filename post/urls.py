@@ -12,4 +12,5 @@ urlpatterns = [
     path('ajax_reply_update/', ajax_reply_update, name='ajax_reply_update'),
     path('ajax_post_send_like/', ajax_post_send_like, name='ajax_post_send_like'),
     path('ajax_reply_send_like/', ajax_reply_send_like, name='ajax_reply_send_like'),
+    path('ajax_home_start/', ajax_home_start, name='ajax_home_start'),
 ]

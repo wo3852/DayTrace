@@ -1,6 +1,13 @@
+<script type="text/javascript">
+  //전역변수..
+    var param_index= "{{index}}"
+    var param_id = "{{id}}"
+</script>
+
 <section class="section is-medium">
     <!--  게시글-->
     <div class="box posting_div">
+        {% if my_check or index == "newsfeed"%}
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
@@ -25,6 +32,7 @@
                 </nav>
             </div>
         </article>
+        {% endif %}
     </div>
     <!--  게시글끝-->
 <!--    <article class="media">-->

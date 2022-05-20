@@ -13,22 +13,35 @@ function getData() {
         type:'POST',
         url:'../post/ajax_get_post/',
         async:false,
-        data:JSON.stringify({"request_url":document.URL}),
+        data:JSON.stringify({"request_url":document.URL,"param_id":param_id}),
         success:function(json){
             post = json
-            $(".post_count").text(post.post_list.length)
-            $(".user_name_title").text(post["user_last_name"])
             $(".send_username").text("@"+post["user_username"])
             $(".send_id").text(post["user_last_name"])
             $(".post_send_user_img")[0].src = get_img(post["user_img"])
-            if ($(".title-user-img")[0]){
-                $(".title-user-img")[0].src = get_img(post["user_img"])
-            }
         },
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText);
         }
    });
+
+       if (param_index == "home"){
+        $.ajax({
+        type:'POST',
+        url:'../post/ajax_home_start/',
+        async:false,
+        data:JSON.stringify({"request_url":document.URL,"param_id":param_id}),
+        success:function(json){
+            $(".post_reply_count")[0].innerHTML = json["post_reply_count"]
+        },
+        error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+      });
+    }
+    if ($(".title-user-img")[0]){$(".title-user-img")[0].src = get_img(post["user_img"])}
+    $(".post_count").text(post.post_list.length)
+    $(".user_name_title").text(post["user_last_name"])
 }
 
 
@@ -170,15 +183,23 @@ $(document).on("click",".reply_button",function(e){
 $(document).on("click",".post_like",function(e){
     var post_item = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement
     var icon = e.currentTarget
+    var count_teg = e.currentTarget.parentElement.children[1]
+    var count = Number(count_teg.innerHTML)
     $.ajax({
         type:'POST',
         url:'../post/ajax_post_send_like/',
         data:JSON.stringify({"post_uuid":get_target(post_item).uuid}),
         success:function(json){
             check = json["like_check"]
-            if(check){icon.style.color = "pink"}
-            else{icon.style.color = ""}
-
+            if(check){
+                icon.style.color = "pink"
+                count += 1
+            }
+            else{
+                icon.style.color = ""
+                count -= 1
+            }
+            count_teg.innerHTML = count
         },
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText);
@@ -189,14 +210,23 @@ $(document).on("click",".post_like",function(e){
 $(document).on("click",".reply_like",function(e){
     var reply_item = e.currentTarget.parentElement.parentElement.parentElement.parentElement.parentElement
     var icon = e.currentTarget
+    var count_teg = e.currentTarget.parentElement.children[1]
+    var count = Number(count_teg.innerHTML)
     $.ajax({
         type:'POST',
         url:'../post/ajax_reply_send_like/',
         data:JSON.stringify({"reply_uuid":get_reply_target(reply_item).reply_uuid}),
         success:function(json){
             check = json["like_check"]
-            if(check){icon.style.color = "pink"}
-            else{icon.style.color = ""}
+            if(check){
+                icon.style.color = "pink"
+                count += 1
+            }
+            else{
+                icon.style.color = ""
+                count -= 1
+            }
+            count_teg.innerHTML = count
         },
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText);
@@ -236,19 +266,27 @@ function reply_add(post_item,dic,index){
     reply_draw(post_item,post["post_list"][index]["reply_list"].length-1)
 }
 
+$(document).on("click",".post_user_img",function(e){
+    var item = e.currentTarget.parentElement.parentElement.parentElement.children[1].children[0].children[0].children[1].innerHTML
+    location.replace("../home/"+item.slice(1));
+});
+
+$(document).on("click",".username_click",function(e){
+    location.replace("../home/"+e.currentTarget.innerHTML.slice(1));
+});
 
 function post_draw(dic,index) {
     html =
         '<article class="media post-item idx-'+index+'">\n'+
         '<div class="media-left">\n'+
         '<figure class="image is-64x64">\n'+
-        '<img src="'+get_img(dic["user_img"])+'" alt="Image">\n'+
+        '<img src="'+get_img(dic["user_img"])+'" alt="Image" style ="cursor:pointer;" class = "post_user_img">\n'+
         '</figure>\n'+
         '</div>\n'+
         '<div class="media-content">\n'+
         '<div class="content">\n'+
         '<p>\n'+
-        '<strong>'+dic["user_last_name"]+'</strong> <small>@'+dic["user_username"]+'</small> <small>'+dic["created_date"]+'</small>\n'+
+        '<strong>'+dic["user_last_name"]+'</strong> <small style ="cursor:pointer; color:rgba(0,208,178);" class = "username_click">@'+dic["user_username"]+'</small> <small>'+dic["created_date"]+'</small>\n'+
         '<pre>\n'+
         naxt_line(dic["content"])+'\n'+
         '</pre>\n'+
@@ -256,7 +294,7 @@ function post_draw(dic,index) {
         '</div>\n'+
         '<nav class="level is-mobile">\n'+
         '<div class="level-left">\n'+
-        icon_show("post",dic["my_item_check"],dic["like_check"])+'\n'+
+        icon_show("post",dic["my_item_check"],dic["like_check"],dic["like_count"])+'\n'+
         '</div>\n'+
         '</nav>\n'+
         '<div class="comment_div" style="display:none;">\n'+
@@ -332,7 +370,7 @@ function reply_draw(post_item,idx) {
         '</div>\n'+
         '<nav class="level is-mobile">\n'+
         '<div class="level-left">\n'+
-        icon_show("reply",dic["my_item_check"],dic["like_check"])+'\n'+
+        icon_show("reply",dic["my_item_check"],dic["like_check"],dic["like_count"])+'\n'+
         '</div>\n'+
         '</nav>\n'+
         '</div>\n'+
@@ -357,7 +395,7 @@ function naxt_line(text){
     return html
 }
 
-function icon_show(type,my_item_check,like_check){
+function icon_show(type,my_item_check,like_check,like_count){
     var html = ""
     var s = ""
     if (like_check){
@@ -373,6 +411,7 @@ function icon_show(type,my_item_check,like_check){
         s+'\n'+
         '<i class="fas fa-heart" aria-hidden="true"></i>\n'+
         '</span>\n'+
+        '<span class="post_like_count" style="font-size: 12px;">'+like_count+'</span>\n'+
         '</a>\n'+
         '<a class="level-item" aria-label="reply">\n'+
         '<span class="icon is-small reply_button">\n'+
@@ -401,6 +440,7 @@ function icon_show(type,my_item_check,like_check){
             s+'\n'+
             '<i class="fas fa-heart" aria-hidden="true"></i>\n'+
             '</span>\n'+
+            '<span class="reply_like_count" style="font-size: 12px;">'+like_count+'</span>\n'+
             '</a>\n'
 
             if (my_item_check){

@@ -7,15 +7,27 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from post.models import Post
 
-def index(request):
+def start(request):
     if not request.session.session_key:
         return redirect("login")
     res = {"user_name":request.user.get_full_name(),
-           "index":"home"}
+           "index":"home",
+           "my_check":True}
+    return redirect("/home/"+request.user.get_username(),res)
+
+def index(request,param):
+    if not request.session.session_key:
+        return redirect("login")
+    res = {"user_name":request.user.get_full_name(),
+           "index":"home",
+           "my_check":param == request.user.get_username(),
+           "id" : param,}
     return render(request,'main/index.html',res)
 
 
 def messenger(request):
+    if not request.session.session_key:
+        return redirect("login")
     res = {"index":"messenger"}
     return render(request, 'main/messenger.html', res)
 
@@ -38,7 +50,8 @@ def ajax_user_img_upload(request):
         return JsonResponse({})
 
 def newsfeed(request):
-
+    if not request.session.session_key:
+        return redirect("login")
     user = User.objects.get(username=request.user.get_username())
 
     s = "SELECT p.post_uuid,p.content,p.content,created_date,u.last_name " \
